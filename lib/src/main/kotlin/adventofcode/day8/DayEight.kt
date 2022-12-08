@@ -64,13 +64,12 @@ class DayEight {
                     var currentScore = 1
                     if (forest[y]!![x]!!.height > forest[y]!![x-1]!!.height) {
                         var leftView = x-1
-                        var maxHeight = forest[y]!![leftView]!!.height
                         while (leftView > 0) {
-                            if (maxHeight <= forest[y]!![leftView-1]!!.height) {
-                                maxHeight = forest[y]!![leftView-1]!!.height
+                            if (treeSize > forest[y]!![leftView]!!.height) {
                                 currentScore++
-                            }
-                            leftView--
+                                leftView--
+                            } else
+                                break
                         }
                     }
 
@@ -86,13 +85,12 @@ class DayEight {
                     currentScore = 1
                     if (forest[y]!![x]!!.height > forest[y]!![x+1]!!.height) {
                         var rightView = x+1
-                        var maxHeight = forest[y]!![rightView]!!.height
                         while (rightView < colNb-1) {
-                            if (maxHeight <= forest[y]!![rightView+1]!!.height) {
-                                maxHeight = forest[y]!![rightView+1]!!.height
+                            if (treeSize > forest[y]!![rightView]!!.height) {
                                 currentScore++
-                            }
-                            rightView++
+                                rightView++
+                            } else
+                                break
                         }
                     }
                     println("Right score is $currentScore")
@@ -107,13 +105,12 @@ class DayEight {
                     currentScore = 1
                     if (forest[y-1]!![x]!!.height < forest[y]!![x]!!.height) {
                         var topView = y-1
-                        var maxHeight = forest[topView]!![x]!!.height
                         while (topView > 0) {
-                            if (maxHeight <= forest[topView-1]!![x]!!.height) {
-                                maxHeight = forest[topView-1]!![x]!!.height
+                            if (treeSize > forest[topView]!![x]!!.height) {
                                 currentScore++
-                            }
-                            topView--
+                                topView--
+                            } else
+                                break
                         }
                     }
                     println("Top score is $currentScore")
@@ -128,13 +125,12 @@ class DayEight {
                     currentScore = 1
                     if (forest[y]!![x]!!.height > forest[y+1]!![x]!!.height) {
                         var bottomView = y+1
-                        var maxHeight = forest[bottomView]!![x]!!.height
                         while (bottomView < rowNb-1) {
-                            if (maxHeight <= forest[bottomView+1]!![x]!!.height) {
-                                maxHeight = forest[bottomView+1]!![x]!!.height
+                            if (treeSize > forest[bottomView]!![x]!!.height) {
                                 currentScore++
-                            }
-                            bottomView++
+                                bottomView++
+                            } else
+                                break
                         }
                     }
                     println("Bottom score is $currentScore")
