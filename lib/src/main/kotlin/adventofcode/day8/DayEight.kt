@@ -2,6 +2,7 @@ package adventofcode.day8
 
 import adventofcode.shared.getLines
 import java.util.stream.IntStream
+import kotlin.math.max
 
 class DayEight {
 
@@ -55,73 +56,86 @@ class DayEight {
                     var scenicScore = 1
 
                     // Check left
-                    var currentScore = 1
                     var leftVisible = true
                     IntStream.range(0, x).forEach { tree ->
                         leftVisible = leftVisible && (forest[e.key]!![tree]!!.height < treeSize)
                     }
-                    var leftView = x-1
-                    if (forest[e.key]!![leftView]!!.height > forest[e.key]!![x]!!.height) leftView = 0
-                    while (leftView > 0) {
-                        if (forest[e.key]!![leftView]!!.height <= forest[e.key]!![leftView-1]!!.height) {
-                            currentScore++
+
+                    var currentScore = 1
+                    if (forest[y]!![x]!!.height > forest[y]!![x-1]!!.height) {
+                        var leftView = x-1
+                        var maxHeight = forest[y]!![leftView]!!.height
+                        while (leftView > 0) {
+                            if (maxHeight <= forest[y]!![leftView-1]!!.height) {
+                                maxHeight = forest[y]!![leftView-1]!!.height
+                                currentScore++
+                            }
                             leftView--
-                        } else
-                            leftView = 0
+                        }
                     }
+
                     println("Left score is $currentScore")
                     scenicScore *= currentScore
 
                     // Check right
-                    currentScore = 1
                     var rightVisible = true
                     IntStream.range(x+1, colNb).forEach { tree ->
                         rightVisible = rightVisible && (forest[e.key]!![tree]!!.height < treeSize)
                     }
-                    var rightView = x+1
-                    if (forest[e.key]!![rightView]!!.height > forest[e.key]!![x]!!.height) rightView = colNb
-                    while (rightView < colNb-1) {
-                        if (forest[e.key]!![rightView]!!.height <= forest[e.key]!![rightView+1]!!.height) {
-                            currentScore++
+
+                    currentScore = 1
+                    if (forest[y]!![x]!!.height > forest[y]!![x+1]!!.height) {
+                        var rightView = x+1
+                        var maxHeight = forest[y]!![rightView]!!.height
+                        while (rightView < colNb-1) {
+                            if (maxHeight <= forest[y]!![rightView+1]!!.height) {
+                                maxHeight = forest[y]!![rightView+1]!!.height
+                                currentScore++
+                            }
                             rightView++
-                        } else
-                            rightView = colNb
+                        }
                     }
                     println("Right score is $currentScore")
                     scenicScore *= currentScore
 
                     // Check top
-                    currentScore = 1
                     var topVisible = true
                     IntStream.range(0, y).forEach { tree ->
                         topVisible = topVisible && (forest[tree]!![x]!!.height < treeSize)
                     }
-                    var topView = y-1
-                    if (forest[topView]!![x]!!.height > forest[y]!![x]!!.height) topView = 0
-                    while (topView > 0) {
-                        if (forest[topView]!![x]!!.height <= forest[topView-1]!![x]!!.height) {
-                            currentScore++
+
+                    currentScore = 1
+                    if (forest[y-1]!![x]!!.height < forest[y]!![x]!!.height) {
+                        var topView = y-1
+                        var maxHeight = forest[topView]!![x]!!.height
+                        while (topView > 0) {
+                            if (maxHeight <= forest[topView-1]!![x]!!.height) {
+                                maxHeight = forest[topView-1]!![x]!!.height
+                                currentScore++
+                            }
                             topView--
-                        } else
-                            topView = 0
+                        }
                     }
                     println("Top score is $currentScore")
                     scenicScore *= currentScore
 
                     // Check bottom
-                    currentScore = 1
                     var bottomVisible = true
                     IntStream.range(y+1, rowNb).forEach { tree ->
                         bottomVisible = bottomVisible && (forest[tree]!![x]!!.height < treeSize)
                     }
-                    var bottomView = y+1
-                    if (forest[bottomView]!![x]!!.height > forest[y]!![x]!!.height) bottomView = rowNb
-                    while (bottomView < rowNb-1) {
-                        if (forest[bottomView]!![x]!!.height <= forest[bottomView+1]!![x]!!.height) {
-                            currentScore++
+
+                    currentScore = 1
+                    if (forest[y]!![x]!!.height > forest[y+1]!![x]!!.height) {
+                        var bottomView = y+1
+                        var maxHeight = forest[bottomView]!![x]!!.height
+                        while (bottomView < rowNb-1) {
+                            if (maxHeight <= forest[bottomView+1]!![x]!!.height) {
+                                maxHeight = forest[bottomView+1]!![x]!!.height
+                                currentScore++
+                            }
                             bottomView++
-                        } else
-                            bottomView = rowNb
+                        }
                     }
                     println("Bottom score is $currentScore")
                     scenicScore *= currentScore
