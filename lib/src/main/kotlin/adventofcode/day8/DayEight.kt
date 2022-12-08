@@ -33,7 +33,7 @@ class DayEight {
     private fun printForest() {
         forest.forEach { a ->
             a.value.forEach{b ->
-                print(forest[a.key]!![b.key]!!.size)
+                print(forest[a.key]!![b.key]!!.height)
             }
             println()
         }
@@ -51,19 +51,19 @@ class DayEight {
                     isVisible = true
                 } else {
                     println(forest[e.key]!![t.key]!!)
-                    val treeSize = forest[e.key]!![t.key]!!.size
+                    val treeSize = forest[e.key]!![t.key]!!.height
                     var scenicScore = 1
 
                     // Check left
                     var currentScore = 1
                     var leftVisible = true
                     IntStream.range(0, x).forEach { tree ->
-                        leftVisible = leftVisible && (forest[e.key]!![tree]!!.size < treeSize)
+                        leftVisible = leftVisible && (forest[e.key]!![tree]!!.height < treeSize)
                     }
                     var leftView = x-1
-                    if (forest[e.key]!![leftView]!!.size > forest[e.key]!![x]!!.size) leftView = 0
+                    if (forest[e.key]!![leftView]!!.height > forest[e.key]!![x]!!.height) leftView = 0
                     while (leftView > 0) {
-                        if (forest[e.key]!![leftView]!!.size <= forest[e.key]!![leftView-1]!!.size) {
+                        if (forest[e.key]!![leftView]!!.height <= forest[e.key]!![leftView-1]!!.height) {
                             currentScore++
                             leftView--
                         } else
@@ -76,12 +76,12 @@ class DayEight {
                     currentScore = 1
                     var rightVisible = true
                     IntStream.range(x+1, colNb).forEach { tree ->
-                        rightVisible = rightVisible && (forest[e.key]!![tree]!!.size < treeSize)
+                        rightVisible = rightVisible && (forest[e.key]!![tree]!!.height < treeSize)
                     }
                     var rightView = x+1
-                    if (forest[e.key]!![rightView]!!.size > forest[e.key]!![x]!!.size) rightView = colNb
+                    if (forest[e.key]!![rightView]!!.height > forest[e.key]!![x]!!.height) rightView = colNb
                     while (rightView < colNb-1) {
-                        if (forest[e.key]!![rightView]!!.size <= forest[e.key]!![rightView+1]!!.size) {
+                        if (forest[e.key]!![rightView]!!.height <= forest[e.key]!![rightView+1]!!.height) {
                             currentScore++
                             rightView++
                         } else
@@ -94,12 +94,12 @@ class DayEight {
                     currentScore = 1
                     var topVisible = true
                     IntStream.range(0, y).forEach { tree ->
-                        topVisible = topVisible && (forest[tree]!![x]!!.size < treeSize)
+                        topVisible = topVisible && (forest[tree]!![x]!!.height < treeSize)
                     }
                     var topView = y-1
-                    if (forest[topView]!![x]!!.size > forest[y]!![x]!!.size) topView = 0
+                    if (forest[topView]!![x]!!.height > forest[y]!![x]!!.height) topView = 0
                     while (topView > 0) {
-                        if (forest[topView]!![x]!!.size <= forest[topView-1]!![x]!!.size) {
+                        if (forest[topView]!![x]!!.height <= forest[topView-1]!![x]!!.height) {
                             currentScore++
                             topView--
                         } else
@@ -112,12 +112,12 @@ class DayEight {
                     currentScore = 1
                     var bottomVisible = true
                     IntStream.range(y+1, rowNb).forEach { tree ->
-                        bottomVisible = bottomVisible && (forest[tree]!![x]!!.size < treeSize)
+                        bottomVisible = bottomVisible && (forest[tree]!![x]!!.height < treeSize)
                     }
                     var bottomView = y+1
-                    if (forest[bottomView]!![x]!!.size > forest[y]!![x]!!.size) bottomView = rowNb
+                    if (forest[bottomView]!![x]!!.height > forest[y]!![x]!!.height) bottomView = rowNb
                     while (bottomView < rowNb-1) {
-                        if (forest[bottomView]!![x]!!.size <= forest[bottomView+1]!![x]!!.size) {
+                        if (forest[bottomView]!![x]!!.height <= forest[bottomView+1]!![x]!!.height) {
                             currentScore++
                             bottomView++
                         } else
@@ -142,8 +142,8 @@ class DayEight {
     }
 }
 
-data class Tree(val x: Int, val y: Int, val size: Int) {
+data class Tree(val x: Int, val y: Int, val height: Int) {
     override fun toString(): String {
-        return "Current tree ($x,$y) is $size"
+        return "Current tree ($x,$y) is $height"
     }
 }
