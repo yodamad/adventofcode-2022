@@ -4,8 +4,11 @@ class DayNineTest {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            DayNineTest().sample()
-            DayNineTest().playWithRope()
+            //DayNineTest().sample()
+            //DayNineTest().playWithRope()
+            DayNineTest().complexSample()
+            DayNineTest().medium()
+            DayNineTest().playWithFullRope()
         }
     }
 
@@ -15,5 +18,17 @@ class DayNineTest {
 
     fun playWithRope() {
         DayNine().playWithRope("moves")
+    }
+
+    fun complexSample() {
+        DayNine().playWithRope("sample", 9)
+    }
+
+    fun medium() {
+        DayNine().playWithRope("medium", 9)
+    }
+
+    fun playWithFullRope() {
+        DayNine().playWithRope("moves", 9)
     }
 }

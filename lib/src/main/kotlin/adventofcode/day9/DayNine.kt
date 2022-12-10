@@ -35,46 +35,56 @@ class DayNine {
                 println("head move $wayToGo $nbOfSteps")
 
                 ropeElementsPositions.forEachIndexed { index, element ->
-                    if (abs(element.first - headPosition.first) > 1 || abs(element.second - headPosition.second) > 1) {
-                        if (element.first < headPosition.first+1 && element.first != headPosition.first) {
+
+                    var previousOne = headPosition
+                    if (index > 0) {
+                        previousOne = ropeElementsPositions[index-1]
+                    }
+
+                    if (abs(element.first - previousOne.first) > 1 || abs(element.second - previousOne.second) > 1) {
+                        if (element.first < previousOne.first+1 && element.first != previousOne.first) {
                             val newX = element.first+1
                             var newY = element.second
-                            if (element.second > headPosition.second) {
+                            if (element.second > previousOne.second) {
                                 newY = element.second-1
-                            } else if (element.second < headPosition.second) {
+                            } else if (element.second < previousOne.second) {
                                 newY = element.second+1
                             }
                             ropeElementsPositions[index] = Pair(newX, newY)
-                        } else if (element.first > headPosition.first-1 && element.first != headPosition.first) {
+                        } else if (element.first > previousOne.first-1 && element.first != previousOne.first) {
                             val newX = element.first-1
                             var newY = element.second
-                            if (element.second > headPosition.second) {
+                            if (element.second > previousOne.second) {
                                 newY = element.second-1
-                            } else if (element.second < headPosition.second) {
+                            } else if (element.second < previousOne.second) {
                                 newY = element.second+1
                             }
                             ropeElementsPositions[index] = Pair(newX, newY)
-                        } else if (element.second < headPosition.second+1 && element.second != headPosition.second) {
+                        } else if (element.second < previousOne.second+1 && element.second != previousOne.second) {
                             var newX = element.first
                             val newY = element.second+1
-                            if (element.first > headPosition.first) {
+                            if (element.first > previousOne.first) {
                                 newX = element.first-1
-                            } else if (element.first < headPosition.first) {
+                            } else if (element.first < previousOne.first) {
                                 newX = element.second
                             }
                             ropeElementsPositions[index] = Pair(newX, newY)
-                        } else if (element.second > headPosition.second-1 && element.second != headPosition.second) {
+                        } else if (element.second > previousOne.second-1 && element.second != previousOne.second) {
                             var newX = element.first
                             val newY = element.second-1
-                            if (element.first > headPosition.first) {
+                            if (element.first > previousOne.first) {
                                 newX = element.first-1
-                            } else if (element.first < headPosition.first) {
+                            } else if (element.first < previousOne.first) {
                                 newX = element.second
                             }
                             ropeElementsPositions[index] = Pair(newX, newY)
                         }
-                        pointsVisited.add(ropeElementsPositions[index])
-                        println("head in ${headPosition}, tail in $element")
+                        if (index == nbElements-1) {
+                            pointsVisited.add(ropeElementsPositions[index])
+                            println("previous in ${previousOne}, tail in $element")
+
+                        }
+                        println("$index in $element")
                     } else {
                         //println("tail doesn't move")
                     }
