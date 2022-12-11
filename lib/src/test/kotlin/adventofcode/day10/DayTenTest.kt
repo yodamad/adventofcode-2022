@@ -5,8 +5,9 @@ class DayTenTest {
         @JvmStatic
         fun main(args: Array<String>) {
             //println("tiny = " + DayTenTest().tiny())
-            println("13140 = " + DayTenTest().sample())
-            println(DayTenTest().computeCommands())
+            //println("13140 = " + DayTenTest().sample())
+            //println(DayTenTest().computeCommands())
+            DayTenTest().print()
         }
     }
 
@@ -20,5 +21,13 @@ class DayTenTest {
 
     fun computeCommands(): Int {
         return DayTen().anotherCompute("commands", 230)
+    }
+
+    fun printSample() {
+        DayTen().anotherCompute("sample", 240)
+    }
+
+    fun print() {
+        DayTen().anotherCompute("commands", 240)
     }
 }

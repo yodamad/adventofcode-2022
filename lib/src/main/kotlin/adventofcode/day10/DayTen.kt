@@ -7,7 +7,10 @@ class DayTen {
 
     val DAY = "day10"
     private var registry = 1
-    private var cycles = mutableMapOf<Int, Int>()
+    private val cycles = mutableMapOf<Int, Int>()
+
+    private val screen = mutableMapOf<Int, String>(0 to "", 1 to "", 2 to "", 3 to "", 4 to "", 5 to "")
+    private var cpt = 0
 
     fun anotherCompute(file: String, nbCycles: Int): Int {
         val commands = file.getLines(DAY)
@@ -17,6 +20,19 @@ class DayTen {
         cycles[0] = 0
 
         IntStream.range(1,nbCycles).forEach { currentCycle ->
+
+            if (cpt in (registry-1 .. registry+1)) {
+                screen[(currentCycle-1)/40] += "#"
+            } else {
+                screen[(currentCycle-1)/40] += "."
+            }
+
+            println("CPT in $cpt")
+            println("Registry is $registry")
+
+            if (cpt >= 39) cpt = 0
+            else cpt++
+
             val currentCommand = commands[commandIndex]
             if (currentCommand.startsWith("noop")) {
                 // noop case
@@ -42,7 +58,14 @@ class DayTen {
         }
         println("${cycles[20]!!} * 20 + ${cycles[60]!!} * 60 + ${cycles[100]!!} * 100 + ${cycles[140]!!}" +
                 " * 140 + ${cycles[180]!!} * 180 + ${cycles[220]!!} * 220") */
+        printScreen()
         return cycles[20]!! * 20 + cycles[60]!! * 60 + cycles[100]!! * 100 + cycles[140]!! * 140 + cycles[180]!! * 180 + cycles[220]!! * 220
 
+    }
+
+    private fun printScreen() {
+        screen.keys.forEach {
+            println("${screen[it]!!}")
+        }
     }
 }
