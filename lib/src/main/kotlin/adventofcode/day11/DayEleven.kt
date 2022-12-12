@@ -10,7 +10,16 @@ class DayEleven {
 
     private val monkeys = mutableListOf<Monkey>()
 
-    fun buildMonkey(file: String) {
+    private lateinit var adjustmentFunction: (Long) -> Long
+
+    fun buildMonkey(file: String, step: Int = 1) {
+
+        if (step == 1) {
+            adjustmentFunction = { abs(it/3) }
+        } else {
+            adjustmentFunction = { it % monkeys.map { i -> i.modulo.toLong() }.reduce(Long::times) }
+        }
+
         var currentMonkey = Monkey(0)
         file.getLines(DAY).forEach { l ->
             if (l.startsWith("Monkey")) {
@@ -40,11 +49,12 @@ class DayEleven {
         monkeys.forEach { println(it) }
         playRounds()
 
-        val result = monkeys.map { it.itemsInspected }.sortedDescending().take(2).reduce { acc, i -> acc * i }
+        monkeys.forEach { println(it) }
+        val result = monkeys.map { it.itemsInspected.toLong() }.sortedDescending().take(2).reduce(Long::times)
         println("Result is $result")
     }
 
-    private fun playRounds(nb: Int = 20) {
+    private fun playRounds(nb: Int = 10000) {
         IntStream.range(1, nb+1).forEach { round ->
             monkeys.forEach { monkey ->
                 playMonkey(monkey)
@@ -52,9 +62,9 @@ class DayEleven {
 
             println("---------------")
             println("End of round $round")
-            println("---------------")
-            monkeys.forEach { println(it) }
-            println("==========================")
+            //println("---------------")
+            //monkeys.forEach { println(it) }
+            //println("==========================")
         }
     }
 
@@ -75,7 +85,8 @@ class DayEleven {
                 boring = (item * item).toLong()
             }
 
-            boring = abs(boring / 3)
+            boring = adjustmentFunction(boring)
+
             if (boring % monkey.modulo == 0L) {
                 // println("(true) Monkey ${monkey.number} sends ${abs(boring / 3)} to ${monkey.ifTrue}")
                 sendToMonkey(monkey.ifTrue, boring)

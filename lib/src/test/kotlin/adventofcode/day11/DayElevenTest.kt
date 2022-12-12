@@ -14,6 +14,6 @@ class DayElevenTest {
     }
 
     fun monkeys() {
-        DayEleven().buildMonkey("monkeys")
+        DayEleven().buildMonkey("monkeys", 2)
     }
 }
