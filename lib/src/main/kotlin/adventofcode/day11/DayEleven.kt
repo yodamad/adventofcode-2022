@@ -11,7 +11,7 @@ class DayEleven {
     private val monkeys = mutableListOf<Monkey>()
 
     fun buildMonkey(file: String) {
-        var currentMonkey: Monkey = Monkey(0)
+        var currentMonkey = Monkey(0)
         file.getLines(DAY).forEach { l ->
             if (l.startsWith("Monkey")) {
                 val regex = """Monkey (\d+):""".toRegex()
@@ -19,7 +19,7 @@ class DayEleven {
                 currentMonkey = Monkey(nb.component1().toInt())
             } else if (l.trimStart().startsWith("Starting")) {
                 val items = l.trimStart().removePrefix("Starting items: ").split(", ")
-                currentMonkey.items = items.map { it.toInt() }.toMutableList()
+                currentMonkey.items = items.map { it.toLong() }.toMutableList()
             } else if (l.trimStart().startsWith("Operation")) {
                 currentMonkey.operation = l.trimStart().removePrefix("Operation: new = ")
             } else if (l.trimStart().startsWith("Test")) {
@@ -63,20 +63,20 @@ class DayEleven {
             val timesRegex = """old \* (\d+)""".toRegex()
             val plusRegex = """old \+ (\d+)""".toRegex()
             val squareRegex = """old \* old""".toRegex()
-            var boring = 0
+            var boring = 0L
 
             if (timesRegex.matches(monkey.operation)) {
                 val times = timesRegex.find(monkey.operation)!!.destructured.component1().toInt()
-                boring = item * times
+                boring = (item * times).toLong()
             } else if (plusRegex.matches(monkey.operation)) {
                 val adds = plusRegex.find(monkey.operation)!!.destructured.component1().toInt()
-                boring = item + adds
+                boring = (item + adds).toLong()
             } else if (squareRegex.matches(monkey.operation)) {
-                boring = item * item
+                boring = (item * item).toLong()
             }
 
             boring = abs(boring / 3)
-            if (boring % monkey.modulo == 0) {
+            if (boring % monkey.modulo == 0L) {
                 // println("(true) Monkey ${monkey.number} sends ${abs(boring / 3)} to ${monkey.ifTrue}")
                 sendToMonkey(monkey.ifTrue, boring)
             } else {
@@ -88,12 +88,12 @@ class DayEleven {
         monkey.items = mutableListOf()
     }
 
-    private fun sendToMonkey(monkeyId: Int, item: Int) {
+    private fun sendToMonkey(monkeyId: Int, item: Long) {
         monkeys.first { it.number == monkeyId }.items.add(item)
     }
 }
 
-data class Monkey(val number: Int, var items: MutableList<Int> = mutableListOf(), var itemsInspected: Int = 0,
+data class Monkey(val number: Int, var items: MutableList<Long> = mutableListOf(), var itemsInspected: Int = 0,
                   var operation: String = "", var modulo: Int = 0, var ifTrue: Int = 0, var ifFalse: Int = 0) {
     override fun toString(): String {
         return "Monkey $number is holding $items, operates with '$operation', condition of division is $modulo : if true, send to $ifTrue otherwise $ifFalse. He inspected $itemsInspected items"
