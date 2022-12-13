@@ -29,6 +29,34 @@ class DayTwelve {
         println("Shorter Path is $shorterPath")
     }
 
+    fun findMyWays(file: String) {
+        val lines = file.getLines(DAY)
+        val lowPoints = findLowPoints(lines)
+        findArrival(lines)
+        buildMap(lines)
+        val shorterPathOfAll = lowPoints.map {
+            var endFound = false
+            var leaves = listOf(it)
+            visitedNodes = mutableListOf()
+
+            while (!endFound && leaves.isNotEmpty()) {
+                val buffer = leaves.map { it2 -> findLeaves(it2) }.flatten().distinct()
+                leaves = buffer
+                endFound = leaves.any{ itX -> itX.isFinal }
+                if (endFound) visitedNodes.addAll(buffer)
+            }
+            //println(visitedNodes.reversed())
+            val shorterPath = visitedNodes
+                .filter { it3 -> it3.isFinal }
+                .map { it4 -> it4.depth }
+                .minOfOrNull{ it5 -> it5 }
+            println("Shorter Path from $it is $shorterPath")
+            shorterPath
+        }.filterNotNull()
+            .minOfOrNull { it }
+        println(shorterPathOfAll)
+    }
+
     private fun findArrival(lines: List<String>) {
         lines
             .mapIndexed { index, s ->
@@ -45,6 +73,14 @@ class DayTwelve {
         println("Starting point is $start")
     }
 
+    private fun findLowPoints(lines: List<String>) = lines
+            .mapIndexed { indexY, s ->
+                s.mapIndexed { indexX, c ->
+                    Node(indexX, indexY, c, depth = 0)
+                }.filter { it.char == 'a' || it.char == 'S' }
+            }.flatten()
+
+
     private fun buildMap(lines: List<String>) {
         myMap = lines.map {it.toCharArray() }.toList()
         myMap.forEach { println(String(it)) }
@@ -59,7 +95,7 @@ class DayTwelve {
                     myMap.getOrNull(y)?.getOrNull(x)?.let { Node(x, y, it, it == 'E', node.depth + 1) }
                 }
                 .map {
-                    println(it)
+                    // println(it)
                     it
                 }
                 .filter { !visitedNodes.contains(it) }
@@ -67,8 +103,8 @@ class DayTwelve {
                         || (it.char == 'E' && node.char in listOf('y', 'z')
                         || (alphabet.indexOf(node.char) < 26 && it.char == alphabet[alphabet.indexOf(node.char) + 1])
                         || (alphabet.indexOf(node.char) > alphabet.indexOf(it.char))) }
-            println("leaves of $node are $leaves")
-            println("--")
+            // println("leaves of $node are $leaves")
+            // println("--")
             return leaves
         }
         return emptyList()

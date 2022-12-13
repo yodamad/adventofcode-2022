@@ -5,7 +5,9 @@ class DayTwelveTest {
         @JvmStatic
         fun main(args: Array<String>) {
             //DayTwelveTest().sample()
-            DayTwelveTest().map()
+            //DayTwelveTest().map()
+            //DayTwelveTest().sampleShort()
+            DayTwelveTest().shortPath()
         }
     }
 
@@ -15,5 +17,13 @@ class DayTwelveTest {
 
     fun map() {
         DayTwelve().findMyWay("map")
+    }
+
+    fun sampleShort() {
+        DayTwelve().findMyWays("sample")
+    }
+
+    fun shortPath() {
+        DayTwelve().findMyWays("map")
     }
 }
