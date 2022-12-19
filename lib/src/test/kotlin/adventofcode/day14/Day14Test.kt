@@ -10,10 +10,10 @@ class Day14Test {
     }
 
     fun sample() {
-        Day14().printMap("sample")
+        Day14().fillWithSand("sample")
     }
 
     fun map() {
-        Day14().printMap("map")
+        Day14().fillWithSand("map")
     }
 }

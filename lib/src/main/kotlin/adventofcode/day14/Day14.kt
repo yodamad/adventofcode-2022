@@ -2,14 +2,22 @@ package adventofcode.day14
 
 import adventofcode.shared.getLines
 import java.util.stream.IntStream
+import kotlin.properties.Delegates
 
 class Day14 {
 
     val DAY = "day14"
     var map = mutableListOf<Point>()
-    val startingPoint = Point(500, 0)
+    val startingPoint = Point(500, 0, "o")
+    var floor by Delegates.notNull<Int>()
 
-    fun printMap(file: String) {
+    fun fillWithSand(file: String) {
+        printMap(file)
+        findFloor()
+        putSand()
+    }
+
+    private fun printMap(file: String) {
         val lines = file.getLines(DAY)
         lines.forEach { l ->
             val points = l.split(" -> ")
@@ -19,39 +27,51 @@ class Day14 {
             map.addAll(points)
 
             points.forEachIndexed { index, point ->
-                if (index < points.size-1) drawLine(point, points[index+1])
+                if (index < points.size - 1) drawLine(point, points[index + 1])
             }
             map = map.sortedBy { it.y }.sortedBy { it.x }.distinct().toMutableList()
         }
         println(map)
+    }
 
+    private fun findFloor() {
+        floor = map.map { it.y }.maxOf { it } + 2
+        println("Floor level is $floor")
+    }
+
+    private fun putSand() {
         var moreMove = true
-        var turn = 1
         var currentPoint = startingPoint
         var sandBlocks = 0
+        var turn = 1
         while(moreMove) {
-            println("Current point is $currentPoint")
-            if (currentPoint.y > map.maxOf { it.y }) {
-                // Finish
+            println("Current point is $currentPoint (turn $turn)")
+            if (map.contains(startingPoint)) {
                 moreMove = false
-            }
-            if (map.contains(Point(currentPoint.x, currentPoint.y+1))) {
-                if (map.contains(Point(currentPoint.x-1, currentPoint.y+1))) {
-                    if (map.contains(Point(currentPoint.x+1, currentPoint.y+1))) {
-                        map.add(Point(currentPoint.x, currentPoint.y, "o"))
-                        currentPoint = startingPoint
-                        sandBlocks++
+                println("Stooopppp")
+            } else {
+                if (currentPoint.y == floor-1) {
+                    map.add(Point(currentPoint.x, currentPoint.y, "o"))
+                    currentPoint = startingPoint
+                    sandBlocks++
+                } else if (map.contains(Point(currentPoint.x, currentPoint.y+1))) {
+                    if (map.contains(Point(currentPoint.x-1, currentPoint.y+1))) {
+                        if (map.contains(Point(currentPoint.x+1, currentPoint.y+1))) {
+                            map.add(Point(currentPoint.x, currentPoint.y, "o"))
+                            currentPoint = startingPoint
+                            sandBlocks++
+                        } else {
+                            currentPoint = Point(currentPoint.x+1, currentPoint.y+1)
+                        }
                     } else {
-                        currentPoint = Point(currentPoint.x+1, currentPoint.y+1)
+                        currentPoint = Point(currentPoint.x-1, currentPoint.y+1)
                     }
                 } else {
-                    currentPoint = Point(currentPoint.x-1, currentPoint.y+1)
+                    currentPoint = Point(currentPoint.x, currentPoint.y+1)
                 }
-            } else {
-                currentPoint = Point(currentPoint.x, currentPoint.y+1)
             }
+            turn++
         }
-
         println("$sandBlocks sand blocks")
     }
 
