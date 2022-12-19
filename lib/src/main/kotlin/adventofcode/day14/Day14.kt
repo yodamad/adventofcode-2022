@@ -11,10 +11,14 @@ class Day14 {
     val startingPoint = Point(500, 0, "o")
     var floor by Delegates.notNull<Int>()
 
-    fun fillWithSand(file: String) {
+    fun fillWithSand(file: String, hasFloor: Boolean) {
         printMap(file)
         findFloor()
-        putSand()
+        if (hasFloor) {
+            putSand { _ -> map.contains(startingPoint) }
+        } else {
+            putSand { pt -> pt.y > map.maxOf { it.y } }
+        }
     }
 
     private fun printMap(file: String) {
@@ -39,14 +43,14 @@ class Day14 {
         println("Floor level is $floor")
     }
 
-    private fun putSand() {
+    private fun putSand(stop : (point: Point) -> Boolean) {
         var moreMove = true
         var currentPoint = startingPoint
         var sandBlocks = 0
         var turn = 1
         while(moreMove) {
             println("Current point is $currentPoint (turn $turn)")
-            if (map.contains(startingPoint)) {
+            if (stop(currentPoint)) {
                 moreMove = false
                 println("Stooopppp")
             } else {
