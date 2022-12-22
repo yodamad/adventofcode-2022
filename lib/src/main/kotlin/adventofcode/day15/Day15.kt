@@ -1,8 +1,10 @@
 package adventofcode.day15
 
 import adventofcode.shared.getLines
+import java.awt.geom.Point2D
 import java.util.stream.LongStream
 import kotlin.math.abs
+import kotlin.math.sign
 
 class Day15 {
 
@@ -10,7 +12,7 @@ class Day15 {
     val map = mutableListOf<Point>()
     private val ranges = mutableListOf<LongRange>()
 
-    fun sensors(file: String, lineNb: Long) {
+    fun sensors(file: String, lineNb: Long, max: Int) {
         val sensors = file.getLines(DAY).map { buildSensor(it) }
         println(sensors)
 
@@ -21,7 +23,22 @@ class Day15 {
 
         sensors.forEach { optimizeVoid(it, lineNb) }
 
-        println(abs(ranges.maxOf { it.endInclusive } - ranges.minOf { it.first }))
+        println(abs(ranges.maxOf { it.last } - ranges.minOf { it.first }))
+
+        // Understand thanks to https://github.com/tginsberg/advent-2022-kotlin
+        val result = sensors.firstNotNullOf {
+            val top = Point(it.x, it.y - it.distance() - 1)
+            val bottom = Point(it.x, it.y + it.distance() + 1)
+            val left = Point(it.x - it.distance() - 1, it.y)
+            val right = Point(it.x + it.distance() + 1, it.y)
+
+            // Draw diamond
+            (top.drawLine(right) + right.drawLine(bottom) + bottom.drawLine(left) + left.drawLine(top))
+                .filter { pt -> pt.x in (0..max) && pt.y in (0 .. max) }
+                .firstOrNull { checkPoint -> sensors.none { s -> s.isInZone(checkPoint) } }
+            }.computeTuningFrequency()
+
+        println(result)
     }
 
     private fun buildSensor(line: String): Sensor {
@@ -56,82 +73,33 @@ class Day15 {
             ranges.add(LongRange(-absX + sensor.x, absX + sensor.x))
         }
     }
-
-    private fun fillVoid(sensor: Sensor, lineNb: Long) {
-        println("Analyzing sensor $sensor")
-        if (lineNb in sensor.y - sensor.distance() .. sensor.y + sensor.distance()) {
-            val absX = sensor.distance() - abs(lineNb - sensor.y)
-            LongRange(-absX, absX).forEach {
-                val point = Point(it + sensor.x, lineNb, '#')
-                if (!map.contains(point)) {
-                    println("Adding point $point")
-                    map.add(point)
-                }
-            }
-        }
-    }
-
-    private fun fillMap(sensor: Sensor, lineNb: Long) {
-        println("Analyzing sensor $sensor")
-
-        if (lineNb in sensor.y - sensor.distance() .. sensor.y + sensor.distance()) {
-
-            LongStream.range(-sensor.distance(), 1).forEach { indexX ->
-                if (lineNb == sensor.y + sensor.distance() + indexX + 1) {
-                    LongStream.range(sensor.y, sensor.y + sensor.distance() + indexX + 1).forEach { indexY ->
-                        val point = Point(sensor.x - indexX, indexY, '#')
-                        if (!map.contains(point) && indexY == lineNb) {
-                            map.add(point)
-                        }
-                    }
-                }
-            }
-
-            LongStream.range(-sensor.distance(), 1).forEach { indexX ->
-                if (lineNb in sensor.y .. sensor.y + sensor.distance() + indexX + 1) {
-                    LongStream.range(sensor.y, sensor.y + sensor.distance() + indexX + 1).forEach { indexY ->
-                        val point = Point(sensor.x + indexX, indexY, '#')
-                        if (!map.contains(point) && indexY == lineNb) {
-                            map.add(point)
-                        }
-                    }
-                }
-            }
-
-            LongStream.range(-sensor.distance(), 1).forEach { indexX ->
-                if (lineNb in sensor.y - sensor.distance() - indexX .. sensor.y) {
-                    LongStream.range(sensor.y - sensor.distance() - indexX, sensor.y).forEach { indexY ->
-                        val point = Point(sensor.x + indexX, indexY, '#')
-                        if (!map.contains(point) && indexY == lineNb) {
-                            map.add(point)
-                        }
-                    }
-                }
-            }
-
-            LongStream.range(-sensor.distance(), 1).forEach { indexX ->
-                if (lineNb in sensor.y - sensor.distance() - indexX .. sensor.y) {
-                    LongStream.range(sensor.y - sensor.distance() - indexX, sensor.y).forEach { indexY ->
-                        val point = Point(sensor.x - indexX, indexY, '#')
-                        if (!map.contains(point) && indexY == lineNb) {
-                            map.add(point)
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
 
 data class Sensor(val x:Long, val y:Long, val beaconX:Long, val beaconY: Long) {
     fun distance(): Long = abs(x-beaconX) + abs(y-beaconY)
+
+    fun isInZone(point: Point): Boolean {
+        return Point(x, y).distanceWith(point) <= distance()
+    }
 
     override fun toString(): String {
         return "($x,$y) has ${distance()} from ($beaconX,$beaconY)"
     }
 }
 
-data class Point(val x:Long, val y:Long, val type: Char?) {
+data class Point(val x:Long, val y:Long, val type: Char? = '.') {
+
+    fun distanceWith(other: Point): Long = abs(x - other.x) + abs(y - other.y)
+
+    fun computeTuningFrequency() = x * 4_000_000 + y
+
+    fun drawLine(endOfLine: Point): List<Point> {
+        val xWay = (endOfLine.x - x).sign
+        val yWay = (endOfLine.y - y).sign
+        return (1 .. maxOf(abs(x- endOfLine.x), abs(y-endOfLine.y)))
+            .scan(this) { newPoint, _ -> Point(newPoint.x + xWay, newPoint.y + yWay, '#') }
+    }
+
     override fun equals(other: Any?): Boolean {
         return other is Point && other.x == x && other.y == y
     }
